@@ -1,1 +1,235 @@
+---
+title: Tasks
+description: API reference for all Tasks endpoints
+---
 
+## Create a task
+
+Creates a new task inside an existing project. Tasks are created with a default status of `pending`.
+
+`POST /tasks`
+
+### Body parameters
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `project_id` | string (UUID) | Yes | The ID of the project to add the task to. Must be a valid `project_id` returned from `POST /projects`. |
+| `title` | string | Yes | The title of the task. Must be a non-empty string. |
+| `description` | string | No | An optional description of the task. |
+
+### Responses
+
+| Status | Meaning |
+|--------|---------|
+| `201 Created` | Task created successfully. Returns the task object with status `pending`. |
+| `400 Bad Request` | The request body is missing a required field or contains an invalid value. Check the `message` field in the response for details. |
+| `401 Unauthorized` | The `Authorization` header is missing or the API key is invalid. |
+| `404 Not Found` | No project found with the provided `project_id`. Create a project first using `POST /projects`. |
+
+### Example request
+
+```bash
+curl -X POST https://test-writechoice.onrender.com/tasks \
+  -H "Authorization: Bearer tf-live-4a8f2c1e9b3d7e6a" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "project_id": "e06ad061-e5c7-4949-9ab7-788f68eab337",
+    "title": "Write quickstart guide",
+    "description": "Draft the end-to-end workflow for new users."
+  }'
+```
+
+### Example response — 201 Created
+
+```json
+{
+  "task_id": "9d249e95-9b81-4ec7-8f4d-d5eae24bf4ee",
+  "project_id": "e06ad061-e5c7-4949-9ab7-788f68eab337",
+  "title": "Write quickstart guide",
+  "description": "Draft the end-to-end workflow for new users.",
+  "status": "pending",
+  "created_at": "2026-07-03T02:48:15.880Z",
+  "updated_at": "2026-07-03T02:48:15.880Z"
+}
+```
+
+### Error responses
+
+**404 Not Found**
+
+```json
+{
+  "error": "Not Found",
+  "message": "No project found with project_id 'abc123'. Create a project first using POST /projects."
+}
+```
+
+---
+
+## List tasks in a project
+
+Returns all tasks belonging to a specific project. If the project exists but has no tasks, returns an empty `tasks` array.
+
+`GET /projects/{project_id}/tasks`
+
+### Path parameters
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `project_id` | string (UUID) | Yes | The ID of the project whose tasks you want to retrieve. |
+
+### Responses
+
+| Status | Meaning |
+|--------|---------|
+| `200 OK` | Tasks retrieved successfully. Returns a list of task objects and a `total` count. |
+| `401 Unauthorized` | The `Authorization` header is missing or the API key is invalid. |
+| `404 Not Found` | No project found with the provided `project_id`. |
+
+### Example request
+
+```bash
+curl https://test-writechoice.onrender.com/projects/e06ad061-e5c7-4949-9ab7-788f68eab337/tasks \
+  -H "Authorization: Bearer tf-live-4a8f2c1e9b3d7e6a"
+```
+
+### Example response — 200 OK
+
+```json
+{
+  "project_id": "e06ad061-e5c7-4949-9ab7-788f68eab337",
+  "total": 1,
+  "tasks": [
+    {
+      "task_id": "9d249e95-9b81-4ec7-8f4d-d5eae24bf4ee",
+      "project_id": "e06ad061-e5c7-4949-9ab7-788f68eab337",
+      "title": "Write quickstart guide",
+      "description": "Draft the end-to-end workflow for new users.",
+      "status": "in_progress",
+      "created_at": "2026-07-03T02:48:15.880Z",
+      "updated_at": "2026-07-03T02:49:38.015Z"
+    }
+  ]
+}
+```
+
+---
+
+## Update a task
+
+Updates one or more fields of an existing task. At least one field must be provided.
+
+`PATCH /tasks/{task_id}`
+
+### Path parameters
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `task_id` | string (UUID) | Yes | The ID of the task to update. |
+
+### Body parameters
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `status` | string | No | The new status for the task. Accepted values: `pending`, `in_progress`, `done`. |
+| `title` | string | No | A new title for the task. |
+| `description` | string | No | A new description for the task. |
+
+<Note>
+  At least one of `status`, `title`, or `description` must be provided. Sending an empty request body returns a `400 Bad Request` error.
+</Note>
+
+### Responses
+
+| Status | Meaning |
+|--------|---------|
+| `200 OK` | Task updated successfully. Returns the updated task object. |
+| `400 Bad Request` | The request body contains an invalid value or no fields were provided. Check the `message` field in the response for details. |
+| `401 Unauthorized` | The `Authorization` header is missing or the API key is invalid. |
+| `404 Not Found` | No task found with the provided `task_id`. |
+
+### Example request
+
+```bash
+curl -X PATCH https://test-writechoice.onrender.com/tasks/9d249e95-9b81-4ec7-8f4d-d5eae24bf4ee \
+  -H "Authorization: Bearer tf-live-4a8f2c1e9b3d7e6a" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "status": "in_progress"
+  }'
+```
+
+### Example response — 200 OK
+
+```json
+{
+  "task_id": "9d249e95-9b81-4ec7-8f4d-d5eae24bf4ee",
+  "project_id": "e06ad061-e5c7-4949-9ab7-788f68eab337",
+  "title": "Write quickstart guide",
+  "description": "Draft the end-to-end workflow for new users.",
+  "status": "in_progress",
+  "created_at": "2026-07-03T02:48:15.880Z",
+  "updated_at": "2026-07-03T02:49:38.015Z"
+}
+```
+
+### Error responses
+
+**400 Bad Request**
+
+```json
+{
+  "error": "Bad Request",
+  "message": "Invalid status 'completed'. Allowed values are: pending, in_progress, done."
+}
+```
+
+**404 Not Found**
+
+```json
+{
+  "error": "Not Found",
+  "message": "No task found with task_id 'abc123'."
+}
+```
+
+---
+
+## Delete a task
+
+Permanently deletes a task. This action cannot be undone.
+
+`DELETE /tasks/{task_id}`
+
+### Path parameters
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `task_id` | string (UUID) | Yes | The ID of the task to delete. |
+
+### Responses
+
+| Status | Meaning |
+|--------|---------|
+| `200 OK` | Task deleted successfully. Returns a confirmation message. |
+| `401 Unauthorized` | The `Authorization` header is missing or the API key is invalid. |
+| `404 Not Found` | No task found with the provided `task_id`. |
+
+### Example request
+
+```bash
+curl -X DELETE https://test-writechoice.onrender.com/tasks/9d249e95-9b81-4ec7-8f4d-d5eae24bf4ee \
+  -H "Authorization: Bearer tf-live-4a8f2c1e9b3d7e6a"
+```
+
+### Example response — 200 OK
+
+```json
+{
+  "message": "Task '9d249e95-9b81-4ec7-8f4d-d5eae24bf4ee' was successfully deleted."
+}
+```
+
+<Warning>
+  Deleting a task is permanent and cannot be undone. Deleted tasks cannot be recovered.
+</Warning>
