@@ -1,1 +1,54 @@
+---
+title: Tasks
+description: Understanding tasks in TaskFlow
+---
 
+A task represents a single unit of work inside a project. Tasks have a title, an optional description, and a status that tracks progress from creation to completion.
+
+## Key properties
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `task_id` | string (UUID) | Unique identifier generated automatically when the task is created. |
+| `project_id` | string (UUID) | The ID of the project this task belongs to. |
+| `title` | string | The title of the task. Required. |
+| `description` | string | An optional description of the task. |
+| `status` | string | The current status of the task. See [Task lifecycle](#task-lifecycle) below. |
+| `created_at` | string (ISO 8601) | Timestamp of when the task was created. |
+| `updated_at` | string (ISO 8601) | Timestamp of the last update to the task. |
+
+## Task lifecycle
+
+Every task in TaskFlow moves through three statuses:
+
+pending → in_progress → done
+
+| Status | Meaning |
+|--------|---------|
+| `pending` | The task has not been started. This is the default status when a task is created. |
+| `in_progress` | The task is actively being worked on. |
+| `done` | The task has been completed. |
+
+Use `PATCH /tasks/{task_id}` to update the status of a task at any point in its lifecycle.
+
+<Note>
+  Status transitions are flexible — you can move a task from any status to any other status. For example, a task can go from `done` back to `in_progress` if work resumes.
+</Note>
+
+## Task dependencies
+
+Tasks cannot exist without a project. You must create a project first and use its `project_id` when creating a task. Attempting to create a task with an invalid or non-existent `project_id` returns a `404 Not Found` error.
+
+## Example task object
+
+```json
+{
+  "task_id": "9d249e95-9b81-4ec7-8f4d-d5eae24bf4ee",
+  "project_id": "e06ad061-e5c7-4949-9ab7-788f68eab337",
+  "title": "Write quickstart guide",
+  "description": "Draft the end-to-end workflow for new users.",
+  "status": "in_progress",
+  "created_at": "2026-07-03T02:48:15.880Z",
+  "updated_at": "2026-07-03T02:49:38.015Z"
+}
+```
