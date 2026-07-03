@@ -12,4 +12,31 @@ TaskFlow is a task management API that allows you to create projects, organize t
 - **Create projects** to group related work
 - **Add tasks** to projects and assign titles and descriptions
 - **Track progress** by updating task status as work moves forward
--
+- **Clean up** by deleting tasks that are no longer needed
+
+## How it works
+
+TaskFlow is organized around two resources: **projects** and **tasks**.
+
+A project is a container for tasks. Before you can create a task, you need a project to put it in. This dependency is intentional — every task in TaskFlow belongs to exactly one project.
+
+Project
+└── Task
+└── Task
+└── Task
+
+## Base URL
+
+All API requests are made to the following base URL:
+https://test-writechoice.onrender.com
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="Authentication" icon="key" href="/authentication">
+    Learn how to authenticate your requests using your API key.
+  </Card>
+  <Card title="Quickstart" icon="bolt" href="/quickstart">
+    Follow a step-by-step guide to create your first project and task.
+  </Card>
+</CardGroup>
