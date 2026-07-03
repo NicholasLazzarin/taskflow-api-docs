@@ -1,1 +1,41 @@
+---
+title: Projects
+description: Understanding projects in TaskFlow
+---
+
+A project is the top-level resource in TaskFlow. It acts as a container for related tasks, allowing you to group work by team, goal, or any organizational structure that fits your workflow.
+
+## Key properties
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `project_id` | string (UUID) | Unique identifier generated automatically when the project is created. |
+| `name` | string | The name of the project. Required. |
+| `description` | string | An optional description of the project's purpose. |
+| `created_at` | string (ISO 8601) | Timestamp of when the project was created. |
+
+## How projects work
+
+When you create a project, TaskFlow returns a `project_id`. This ID is required for every task operation — you cannot create, list, or manage tasks without a valid `project_id`.
+
+POST /projects → returns project_id
+↓
+POST /tasks (requires project_id)
+↓
+GET /projects/{project_id}/tasks (requires project_id)
+
+<Note>
+  TaskFlow does not currently support updating or deleting projects. To remove a project's tasks, delete each task individually using `DELETE /tasks/{task_id}`.
+</Note>
+
+## Example project object
+
+```json
+{
+  "project_id": "e06ad061-e5c7-4949-9ab7-788f68eab337",
+  "name": "TaskFlow Documentation",
+  "description": "Writing the official TaskFlow API docs.",
+  "created_at": "2026-07-03T02:45:56.075Z"
+}
+```
 
