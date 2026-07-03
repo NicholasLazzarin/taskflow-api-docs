@@ -1,1 +1,176 @@
+---
+title: Quickstart
+description: Create your first project and task in minutes
+---
 
+This guide walks you through the core TaskFlow workflow: creating a project, adding a task, updating its status, listing your tasks, and deleting a task.
+
+<Note>
+  The TaskFlow API may take up to 60 seconds to respond on the first request if it has been idle. This is expected behavior.
+</Note>
+
+## Before you begin
+
+Make sure you have your API key ready. All requests require the following header:
+
+Authorization: Bearer tf-live-4a8f2c1e9b3d7e6
+
+---
+
+## Step 1 — Create a project
+
+Every task in TaskFlow belongs to a project. Start by creating one.
+
+```bash
+curl -X POST https://test-writechoice.onrender.com/projects \
+  -H "Authorization: Bearer tf-live-4a8f2c1e9b3d7e6a" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "TaskFlow Documentation",
+    "description": "Writing the official TaskFlow API docs."
+  }'
+```
+
+**Response — 201 Created**
+
+```json
+{
+  "project_id": "e06ad061-e5c7-4949-9ab7-788f68eab337",
+  "name": "TaskFlow Documentation",
+  "description": "Writing the official TaskFlow API docs.",
+  "created_at": "2026-07-03T02:45:56.075Z"
+}
+```
+
+Copy the `project_id` from the response. You will need it in the next step.
+
+---
+
+## Step 2 — Create a task
+
+Use the `project_id` from Step 1 to create a task inside your project.
+
+```bash
+curl -X POST https://test-writechoice.onrender.com/tasks \
+  -H "Authorization: Bearer tf-live-4a8f2c1e9b3d7e6a" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "project_id": "e06ad061-e5c7-4949-9ab7-788f68eab337",
+    "title": "Write quickstart guide",
+    "description": "Draft the end-to-end workflow for new users."
+  }'
+```
+
+**Response — 201 Created**
+
+```json
+{
+  "task_id": "9d249e95-9b81-4ec7-8f4d-d5eae24bf4ee",
+  "project_id": "e06ad061-e5c7-4949-9ab7-788f68eab337",
+  "title": "Write quickstart guide",
+  "description": "Draft the end-to-end workflow for new users.",
+  "status": "pending",
+  "created_at": "2026-07-03T02:48:15.880Z",
+  "updated_at": "2026-07-03T02:48:15.880Z"
+}
+```
+
+Copy the `task_id` from the response. You will need it in the next steps.
+
+---
+
+## Step 3 — Update the task status
+
+Tasks are created with a default status of `pending`. Update it to `in_progress` to indicate work has started.
+
+```bash
+curl -X PATCH https://test-writechoice.onrender.com/tasks/9d249e95-9b81-4ec7-8f4d-d5eae24bf4ee \
+  -H "Authorization: Bearer tf-live-4a8f2c1e9b3d7e6a" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "status": "in_progress"
+  }'
+```
+
+**Response — 200 OK**
+
+```json
+{
+  "task_id": "9d249e95-9b81-4ec7-8f4d-d5eae24bf4ee",
+  "project_id": "e06ad061-e5c7-4949-9ab7-788f68eab337",
+  "title": "Write quickstart guide",
+  "description": "Draft the end-to-end workflow for new users.",
+  "status": "in_progress",
+  "created_at": "2026-07-03T02:48:15.880Z",
+  "updated_at": "2026-07-03T02:49:38.015Z"
+}
+```
+
+---
+
+## Step 4 — List tasks in your project
+
+Retrieve all tasks belonging to your project to confirm everything looks correct.
+
+```bash
+curl https://test-writechoice.onrender.com/projects/e06ad061-e5c7-4949-9ab7-788f68eab337/tasks \
+  -H "Authorization: Bearer tf-live-4a8f2c1e9b3d7e6a"
+```
+
+**Response — 200 OK**
+
+```json
+{
+  "project_id": "e06ad061-e5c7-4949-9ab7-788f68eab337",
+  "total": 1,
+  "tasks": [
+    {
+      "task_id": "9d249e95-9b81-4ec7-8f4d-d5eae24bf4ee",
+      "project_id": "e06ad061-e5c7-4949-9ab7-788f68eab337",
+      "title": "Write quickstart guide",
+      "description": "Draft the end-to-end workflow for new users.",
+      "status": "in_progress",
+      "created_at": "2026-07-03T02:48:15.880Z",
+      "updated_at": "2026-07-03T02:49:38.015Z"
+    }
+  ]
+}
+```
+
+---
+
+## Step 5 — Delete a task
+
+When a task is no longer needed, delete it permanently using its `task_id`.
+
+```bash
+curl -X DELETE https://test-writechoice.onrender.com/tasks/9d249e95-9b81-4ec7-8f4d-d5eae24bf4ee \
+  -H "Authorization: Bearer tf-live-4a8f2c1e9b3d7e6a"
+```
+
+**Response — 200 OK**
+
+```json
+{
+  "message": "Task '9d249e95-9b81-4ec7-8f4d-d5eae24bf4ee' was successfully deleted."
+}
+```
+
+<Warning>
+  Deleting a task is permanent and cannot be undone.
+</Warning>
+
+---
+
+## What's next
+
+Now that you've completed the core workflow, explore the full API reference for all available parameters and response details.
+
+<CardGroup cols={2}>
+  <Card title="Projects" icon="folder" href="/api-reference/projects">
+    Full reference for the POST /projects endpoint.
+  </Card>
+  <Card title="Tasks" icon="check" href="/api-reference/tasks">
+    Full reference for all task endpoints.
+  </Card>
+</CardGroup>
