@@ -1,1 +1,39 @@
+---
+title: Authentication
+description: How to authenticate requests to the TaskFlow API
+---
 
+All requests to the TaskFlow API require a valid API key passed in the `Authorization` header.
+
+## API key
+
+Include your API key in every request using the following format:
+
+Authorization: Bearer tf-live-4a8f2c1e9b3d7e6a
+
+<Warning>
+  Keep your API key secret. Do not expose it in client-side code, public repositories, or any environment accessible to end users.
+</Warning>
+
+## Example request
+
+```bash
+curl https://test-writechoice.onrender.com/projects \
+  -H "Authorization: Bearer tf-live-4a8f2c1e9b3d7e6a" \
+  -H "Content-Type: application/json"
+```
+
+## Authentication errors
+
+If your API key is missing or invalid, the API returns a `401 Unauthorized` response:
+
+```json
+{
+  "error": "Unauthorized",
+  "message": "Missing or invalid API key. Provide a valid key in the Authorization header as: Bearer <api_key>"
+}
+```
+
+| Status | Meaning |
+|--------|---------|
+| `401 Unauthorized` | The `Authorization` header is missing, or the API key is invalid. |
