@@ -1,1 +1,37 @@
-
+{
+  "$schema": "https://mintlify.com/schema.json",
+  "name": "TaskFlow API",
+  "theme": "mint",
+  "favicon": "/favicon.svg",
+  "colors": {
+    "primary": "#6E56CF",
+    "light": "#9B8AFB",
+    "dark": "#6E56CF"
+  },
+  "navigation": {
+    "tabs": [
+      {
+        "tab": "Getting Started",
+        "pages": [
+          "index",
+          "authentication",
+          "quickstart"
+        ]
+      },
+      {
+        "tab": "Core Concepts",
+        "pages": [
+          "concepts/projects",
+          "concepts/tasks"
+        ]
+      },
+      {
+        "tab": "API Reference",
+        "pages": [
+          "api-reference/projects",
+          "api-reference/tasks"
+        ]
+      }
+    ]
+  }
+}
